@@ -8,12 +8,23 @@ const PLAYER_HEAL_VALUE = 20;
 let chosenMaxLife = 100;
 let currentPlayerLife = chosenMaxLife;
 let currentMonsterLife = chosenMaxLife;
+let hasBonusLife = true;
 
 adjustHealthBars(chosenMaxLife);
 
 const endRound = () => {
+  let initialPlayerLife = currentPlayerLife
   let playerdamage = dealPlayerDamage(MONSTER_ATTACK_VALUE);
   currentPlayerLife -= playerdamage;
+
+  if (currentPlayerLife <=0 && hasBonusLife){
+    removeBonusLife();
+    hasBonusLife = false;
+    currentPlayerLife = initialPlayerLife;
+    setPlayerHealth(initialPlayerLife);
+    alert("You would be dead but bonus life saved you");
+    //bonus life resets the player health to the condition just before the monster attacks , thus saving from losing
+  }
   console.log("players health" + currentPlayerLife);
   console.log("monsters health" + currentMonsterLife);
 

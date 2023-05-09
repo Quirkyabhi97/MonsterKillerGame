@@ -3,9 +3,18 @@ const PLAYER_STRONG_ATTACK_VALUE = 15;
 const MONSTER_ATTACK_VALUE = 15;
 const PLAYER_HEAL_VALUE = 20;
 
-//Global variable hence declared in CAPS
+const MODE_ATTACK = "Attack";
+const MODE_STRONG_ATTACK = "Strong Attack";
 
-let chosenMaxLife = 100;
+//Global variable hence declared in CAPS
+let enteredValue = prompt("Enter the maximum life of characters");
+
+let chosenMaxLife = parseInt(enteredValue);
+
+if (isNaN(chosenMaxLife) || chosenMaxLife <= 0) {
+  chosenMaxLife = 100;
+}
+
 let currentPlayerLife = chosenMaxLife;
 let currentMonsterLife = chosenMaxLife;
 let hasBonusLife = true;
@@ -13,17 +22,17 @@ let hasBonusLife = true;
 adjustHealthBars(chosenMaxLife);
 
 const reset = () => {
-   currentPlayerLife = chosenMaxLife;
-   currentMonsterLife = chosenMaxLife;
-   resetGame(chosenMaxLife);
-}
+  currentPlayerLife = chosenMaxLife;
+  currentMonsterLife = chosenMaxLife;
+  resetGame(chosenMaxLife);
+};
 
 const endRound = () => {
-  let initialPlayerLife = currentPlayerLife
+  let initialPlayerLife = currentPlayerLife;
   let playerdamage = dealPlayerDamage(MONSTER_ATTACK_VALUE);
   currentPlayerLife -= playerdamage;
 
-  if (currentPlayerLife <=0 && hasBonusLife){
+  if (currentPlayerLife <= 0 && hasBonusLife) {
     removeBonusLife();
     hasBonusLife = false;
     currentPlayerLife = initialPlayerLife;
@@ -41,16 +50,16 @@ const endRound = () => {
   } else if (currentPlayerLife <= 0 && currentMonsterLife <= 0) {
     alert("It's a draw");
   }
-  if (currentPlayerLife <= 0 || currentMonsterLife <= 0 ) {
+  if (currentPlayerLife <= 0 || currentMonsterLife <= 0) {
     reset();
   }
 };
 
 const attackMonster = (typeOfAttack) => {
-  if (typeOfAttack === "attack") {
+  if (typeOfAttack === MODE_ATTACK) {
     let monsterdamage = dealMonsterDamage(PLAYER_ATTACK_VALUE);
     currentMonsterLife -= monsterdamage;
-  } else if (typeOfAttack === "strong attack") {
+  } else if (typeOfAttack === MODE_STRONG_ATTACK) {
     let monsterdamage = dealMonsterDamage(PLAYER_STRONG_ATTACK_VALUE);
     currentMonsterLife -= monsterdamage;
   }
@@ -58,21 +67,20 @@ const attackMonster = (typeOfAttack) => {
 };
 
 const attackHandler = () => {
-  attackMonster("attack");
+  attackMonster(MODE_ATTACK);
 };
 
 const strongAttackHandler = () => {
-  attackMonster("strong attack");
+  attackMonster(MODE_STRONG_ATTACK);
 };
 
 const healPlayerHandler = () => {
   let finalHealValue;
-  if (currentPlayerLife>=chosenMaxLife - PLAYER_HEAL_VALUE){
+  if (currentPlayerLife >= chosenMaxLife - PLAYER_HEAL_VALUE) {
     alert("Heal Value modified as you cannot heal more than your max health");
-    finalHealValue = chosenMaxLife - currentPlayerLife
-  }
-  else {
-    finalHealValue = PLAYER_HEAL_VALUE
+    finalHealValue = chosenMaxLife - currentPlayerLife;
+  } else {
+    finalHealValue = PLAYER_HEAL_VALUE;
   }
   console.log("heal value is" + finalHealValue);
   increasePlayerHealth(finalHealValue);

@@ -33,18 +33,34 @@ const writeLogHandler = (ev, val, playerHealth, monsterHealth) => {
     finalPlayerHealth: playerHealth,
     finalMonsterHealth: monsterHealth,
   };
-  if (ev == LOG_EVENT_PLAYER_ATTACK) {
-    logEntry.target = "Monster";
+  switch (ev) {
+    case LOG_EVENT_PLAYER_ATTACK:
+      logEntry.target = "Monster";
+      break;
+    case LOG_EVENT_PLAYER_STRONG_ATTACK:
+      logEntry.target = "Monster";
+      break;
+    case LOG_EVENT_MONSTER_ATTACK:
+      logEntry.target = "Player";
+      break;
+    case LOG_EVENT_PLAYER_HEAL:
+      logEntry.target = "Player";
+      break;
+    case LOG_EVENT_GAME_OVER:
+      logEntry;
+      break;
+    default:
+      logEntry = {};
   }
-  else if (ev == LOG_EVENT_PLAYER_STRONG_ATTACK) {
-    logEntry.target = "Monster";
-  }
-  else if (ev == LOG_EVENT_MONSTER_ATTACK) {
-    logEntry.target = "Player";
-  }
-  else if (ev == LOG_EVENT_PLAYER_HEAL) {
-    logEntry.target = "Player";
-  }
+  // if (ev == LOG_EVENT_PLAYER_ATTACK) {
+  //   logEntry.target = "Monster";
+  // } else if (ev == LOG_EVENT_PLAYER_STRONG_ATTACK) {
+  //   logEntry.target = "Monster";
+  // } else if (ev == LOG_EVENT_MONSTER_ATTACK) {
+  //   logEntry.target = "Player";
+  // } else if (ev == LOG_EVENT_PLAYER_HEAL) {
+  //   logEntry.target = "Player";
+  // }
   battleLog.push(logEntry);
 };
 
@@ -60,7 +76,12 @@ const endRoundHandler = () => {
   let initialPlayerLife = currentPlayerLife;
   let playerdamage = dealPlayerDamage(MONSTER_ATTACK_VALUE);
   currentPlayerLife -= playerdamage;
-  writeLogHandler(LOG_EVENT_MONSTER_ATTACK,playerdamage,currentPlayerLife,currentMonsterLife);
+  writeLogHandler(
+    LOG_EVENT_MONSTER_ATTACK,
+    playerdamage,
+    currentPlayerLife,
+    currentMonsterLife
+  );
 
   if (currentPlayerLife <= 0 && hasBonusLife) {
     removeBonusLife();
@@ -75,13 +96,28 @@ const endRoundHandler = () => {
 
   if (currentMonsterLife <= 0 && currentPlayerLife > 0) {
     alert("You Won");
-    writeLogHandler(LOG_EVENT_GAME_OVER,'Player Won',currentPlayerLife,currentMonsterLife);
+    writeLogHandler(
+      LOG_EVENT_GAME_OVER,
+      "Player Won",
+      currentPlayerLife,
+      currentMonsterLife
+    );
   } else if (currentPlayerLife <= 0 && currentMonsterLife > 0) {
     alert("You Lost");
-    writeLogHandler(LOG_EVENT_GAME_OVER,'Monster Won',currentPlayerLife,currentMonsterLife);
+    writeLogHandler(
+      LOG_EVENT_GAME_OVER,
+      "Monster Won",
+      currentPlayerLife,
+      currentMonsterLife
+    );
   } else if (currentPlayerLife <= 0 && currentMonsterLife <= 0) {
     alert("It's a draw");
-    writeLogHandler(LOG_EVENT_GAME_OVER,'Game Draw',currentPlayerLife,currentMonsterLife);
+    writeLogHandler(
+      LOG_EVENT_GAME_OVER,
+      "Game Draw",
+      currentPlayerLife,
+      currentMonsterLife
+    );
   }
   if (currentPlayerLife <= 0 || currentMonsterLife <= 0) {
     resetHandler();
@@ -89,19 +125,26 @@ const endRoundHandler = () => {
 };
 
 const attackMonster = (typeOfAttack) => {
-  let event;
-  let monsterdamage;
-  if (typeOfAttack === MODE_ATTACK) {
-    monsterdamage = dealMonsterDamage(PLAYER_ATTACK_VALUE);
-    currentMonsterLife -= monsterdamage;
-    event = LOG_EVENT_PLAYER_ATTACK;
-    
-  } else if (typeOfAttack === MODE_STRONG_ATTACK) {
-    monsterdamage = dealMonsterDamage(PLAYER_STRONG_ATTACK_VALUE);
-    currentMonsterLife -= monsterdamage;
-    event = LOG_EVENT_PLAYER_STRONG_ATTACK
-  }
-  writeLogHandler(event,monsterdamage,currentPlayerLife,currentMonsterLife);
+  const event =
+    typeOfAttack === MODE_ATTACK
+      ? LOG_EVENT_PLAYER_ATTACK
+      : LOG_EVENT_PLAYER_STRONG_ATTACK;
+  const monsterdamage =
+    typeOfAttack === MODE_ATTACK
+      ? dealMonsterDamage(PLAYER_ATTACK_VALUE)
+      : dealMonsterDamage(PLAYER_STRONG_ATTACK_VALUE);
+  // if (typeOfAttack === MODE_ATTACK) {
+  //   monsterdamage = dealMonsterDamage(PLAYER_ATTACK_VALUE);
+  //   currentMonsterLife -= monsterdamage;
+  //   event = LOG_EVENT_PLAYER_ATTACK;
+
+  // } else if (typeOfAttack === MODE_STRONG_ATTACK) {
+  //   monsterdamage = dealMonsterDamage(PLAYER_STRONG_ATTACK_VALUE);
+  //   currentMonsterLife -= monsterdamage;
+  //   event = LOG_EVENT_PLAYER_STRONG_ATTACK
+  // }
+  currentMonsterLife -= monsterdamage;
+  writeLogHandler(event, monsterdamage, currentPlayerLife, currentMonsterLife);
   endRoundHandler();
 };
 
@@ -124,13 +167,18 @@ const healPlayerHandler = () => {
   console.log("heal value is" + finalHealValue);
   increasePlayerHealth(finalHealValue);
   currentPlayerLife += finalHealValue;
-  writeLogHandler(LOG_EVENT_PLAYER_HEAL,finalHealValue,currentPlayerLife,currentMonsterLife);
+  writeLogHandler(
+    LOG_EVENT_PLAYER_HEAL,
+    finalHealValue,
+    currentPlayerLife,
+    currentMonsterLife
+  );
   endRoundHandler();
 };
 
-const printLogHandler = () =>{
- console.log(battleLog);
-}
+const printLogHandler = () => {
+  console.log(battleLog);
+};
 
 attackBtn.addEventListener("click", attackHandler);
 strongAttackBtn.addEventListener("click", strongAttackHandler);
